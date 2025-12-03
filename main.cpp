@@ -6,7 +6,7 @@
 #include <iomanip>
 
 using namespace std;
- 
+
 // Deklarasi fungsi Show (yang implementasinya ada di lowongan.cpp dan mahasiswa.cpp)
 // --- FUNGSI UTAMA ---
 int main() {
@@ -188,7 +188,13 @@ int main() {
                 break;
             }
             case 11:
-                cout << "Program selesai. Terima kasih!" << endl;
+                cout << R"(
+ _____ _____ ____  ___ __  __    _    _  __    _    ____ ___ _   _
+|_   _| ____|  _ \|_ _|  \/  |  / \  | |/ /   / \  / ___|_ _| | | |
+  | | |  _| | |_) || || |\/| | / _ \ | ' /   / _ \ \___ \| || |_| |
+  | | | |___|  _ < | || |  | |/ ___ \| . \  / ___ \ ___) | ||  _  |
+  |_| |_____|_| \_\___|_|  |_/_/   \_\_|\_\/_/   \_\____/___|_| |_|
+)" << endl;
                 break;
             default:
                 cout << "Pilihan tidak ditemukan." << endl;
