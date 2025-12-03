@@ -1,3 +1,4 @@
+#include "login.h"
 #include "lowongan.h"
 #include "mahasiswa.h"
 #include "lamaran.h"
@@ -5,9 +6,7 @@
 #include <iomanip>
 
 using namespace std;
-
-
-cout << "memek" << endl; 
+ 
 // Deklarasi fungsi Show (yang implementasinya ada di lowongan.cpp dan mahasiswa.cpp)
 // --- FUNGSI UTAMA ---
 int main() {
@@ -15,6 +14,16 @@ int main() {
     ListChild L_Child;
     createListParent(L_Parent);
     createListChild(L_Child);
+
+    // --- LOGIN SYSTEM INTEGRATION ---
+    initUsers(); // Initialize hardcoded users
+    string activeUser;
+    if (!Login(activeUser)) {
+        cout << "Aplikasi ditutup." << endl;
+        return 0;
+    }
+    // --------------------------------
+
 
     int counter_lowongan = 103;
     int counter_lamaran = 1;
