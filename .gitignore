@@ -1,0 +1,4 @@
+app.exe
+uploads/
+obj/
+*.o
