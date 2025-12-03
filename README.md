@@ -40,12 +40,17 @@ Sistem Layanan Magang adalah aplikasi berbasis konsol (CLI) yang dibangun menggu
 
 ### Instalasi & Run
 1.  Clone repository ini.
-2.  Jalankan script `run.bat` (jika ada) atau compile manual:
+2.  **Cara Mudah (Recommended):**
+    Cukup klik dua kali file `run.bat` atau jalankan via terminal:
+    ```bash
+    ./run.bat
+    ```
+    Script ini akan otomatis melakukan compile dan menjalankan aplikasi.
+
+3.  **Cara Manual (Alternatif):**
+    Jika ingin compile sendiri:
     ```bash
     g++ main.cpp lamaran.cpp lowongan.cpp mahasiswa.cpp login.cpp -o app.exe -lcomdlg32
-    ```
-3.  Jalankan aplikasi:
-    ```bash
     ./app.exe
     ```
 
