@@ -12,4 +12,5 @@ void showLowongan(ListParent L_Parent);
 void showMahasiswa(ListChild L_Child);
 // --- FUNGSI INPUT UTAMA (INTERAKTIF) ---
 void menuInsertParent(ListParent &L, int &ID_Counter);
+void importLowonganFromAPI(ListParent &L, string filePath);
 #endif // LOWONGAN_H

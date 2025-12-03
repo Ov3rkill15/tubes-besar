@@ -112,6 +112,7 @@ int main() {
                 cout << "1. Input Lowongan Baru" << endl;
                 cout << "2. Berikan Keputusan Lamaran" << endl;
                 cout << "3. Rekap Lamaran Masuk (ATS Score)" << endl;
+                cout << "4. Cari Lowongan Online (API)" << endl;
                 cout << "0. Keluar (Logout)" << endl;
             } else if (activeRole == "admin") {
                 cout << "1. Kelola User (Admin Panel)" << endl;
@@ -278,6 +279,18 @@ int main() {
                     }
                     case 3: { // Rekap
                         showRekapLamaranPerusahaan(L_Parent);
+                        break;
+                    }
+                    case 4: { // API Search
+                        string keyword;
+                        cout << "Masukkan Kata Kunci Lowongan (misal: Java, Marketing): ";
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        getline(cin, keyword);
+
+                        string command = "python tools/search_jobs.py \"" + keyword + "\"";
+                        system(command.c_str());
+
+                        importLowonganFromAPI(L_Parent, "search_results.txt");
                         break;
                     }
                     default: cout << "Pilihan tidak valid." << endl;

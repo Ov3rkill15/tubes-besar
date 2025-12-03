@@ -2,6 +2,10 @@
 #include <cstring>
 #include <limits>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <cstdlib>
 
 using namespace std;
 
@@ -90,4 +94,66 @@ void menuInsertParent(ListParent &L, int &ID_Counter) {
     insertParent(L, P_Baru);
 
     ID_Counter++; // Tambah counter untuk Lowongan berikutnya
+}
+
+// --- FITUR API SEARCH ---
+void importLowonganFromAPI(ListParent &L, string filePath) {
+    ifstream file(filePath);
+    if (!file.is_open()) {
+        cout << "Gagal membuka file hasil pencarian API." << endl;
+        return;
+    }
+
+    string line;
+    int count = 0;
+    struct JobTemp {
+        string title;
+        string company;
+        double gpa;
+    } jobs[20]; // Max 20 results
+
+    cout << "\n--- HASIL PENCARIAN API ---" << endl;
+    while (getline(file, line) && count < 20) {
+        stringstream ss(line);
+        string segment;
+        vector<string> seglist;
+
+        while (getline(ss, segment, '|')) {
+            seglist.push_back(segment);
+        }
+
+        if (seglist.size() >= 3) {
+            jobs[count].title = seglist[0];
+            jobs[count].company = seglist[1];
+            jobs[count].gpa = stod(seglist[2]);
+            
+            cout << count + 1 << ". " << jobs[count].title << " at " << jobs[count].company << " (Min GPA: " << jobs[count].gpa << ")" << endl;
+            count++;
+        }
+    }
+    file.close();
+
+    if (count == 0) {
+        cout << "Tidak ada lowongan ditemukan." << endl;
+        return;
+    }
+
+    int choice;
+    cout << "\nPilih nomor lowongan untuk ditambahkan (0 untuk batal): ";
+    cin >> choice;
+
+    if (choice > 0 && choice <= count) {
+        // Generate Random ID for new job (simple approach)
+        int newID = 200 + rand() % 1000; 
+        
+        // Check if ID exists (optional, but good practice)
+        while (findParent(L, newID) != nullptr) {
+            newID = 200 + rand() % 1000;
+        }
+
+        insertParent(L, alokasiParent(newID, jobs[choice-1].title, jobs[choice-1].company, jobs[choice-1].gpa));
+        cout << "Lowongan berhasil ditambahkan dengan ID " << newID << "!" << endl;
+    } else {
+        cout << "Dibatalkan." << endl;
+    }
 }
