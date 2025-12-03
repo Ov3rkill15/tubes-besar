@@ -7,7 +7,7 @@
 using namespace std;
 
 
-
+cout << "memek" << endl; 
 // Deklarasi fungsi Show (yang implementasinya ada di lowongan.cpp dan mahasiswa.cpp)
 // --- FUNGSI UTAMA ---
 int main() {
@@ -189,3 +189,4 @@ int main() {
 
     return 0;
 }
+
