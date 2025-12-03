@@ -39,6 +39,8 @@
 		<Unit filename="MLL_STRUCTS.h" />
 		<Unit filename="lamaran.cpp" />
 		<Unit filename="lamaran.h" />
+		<Unit filename="login.cpp" />
+		<Unit filename="login.h" />
 		<Unit filename="lowongan.cpp" />
 		<Unit filename="lowongan.h" />
 		<Unit filename="mahasiswa.cpp" />

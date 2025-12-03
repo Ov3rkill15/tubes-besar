@@ -118,7 +118,7 @@ void initUsers() {
         {"anggitacahyatihidayat", "0041", "mahasiswa"},
         {"wibnuhijrahfranstio", "0048", "mahasiswa"},
         {"meyshaprimiandita", "0050", "mahasiswa"},
-        {"muhamadfiqrihabibi", "0056", "mahasiswa"},
+        {"muhammadfiqrihabibi", "0056", "mahasiswa"},
         {"fitriacahyani", "0060", "mahasiswa"},
         {"triansyahdaniswaraibrahim", "0062", "mahasiswa"},
         {"rakhaabdillahalkautsar", "0068", "mahasiswa"},
@@ -187,6 +187,7 @@ bool Login(string &activeUser, string &activeRole) {
         PrintLoginHeader();
         cout << "1. Masuk" << endl;
         cout << "2. Daftar" << endl;
+        cout << "0. Keluar" << endl;
         cout << "Pilih yang mana: ";
         getline(cin, pilihan);
 
@@ -263,6 +264,11 @@ bool Login(string &activeUser, string &activeRole) {
                     attempts++;
                 }
             }
+        } else if (pilihan == "0" || pilihan == "keluar") {
+            cout << "Keluar dari aplikasi..." << endl;
+            
+            running = false;
+            return false; // Return false to signal exit in main
         } else {
             cout << "Pilihan tidak valid." << endl;
             Loading(1000);

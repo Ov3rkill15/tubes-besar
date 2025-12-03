@@ -1,11 +1,11 @@
+#include <windows.h>
+#include <commdlg.h>
 #include "login.h"
 #include "lowongan.h"
 #include "mahasiswa.h"
 #include "lamaran.h"
 #include <limits>
 #include <iomanip>
-#include <windows.h>
-#include <commdlg.h>
 
 using namespace std;
 
@@ -19,7 +19,7 @@ string OpenFileDialog() {
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = "PDF Files\0*.pdf\0All Files\0*.*\0";
+    ofn.lpstrFilter = "PDF Files\0*.pdf\0Text Files\0*.txt\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -43,6 +43,12 @@ int main() {
     // --- LOGIN SYSTEM INTEGRATION ---
     initUsers(); // Initialize hardcoded users
     
+    // Create uploads directory if not exists
+    system("mkdir uploads 2> NUL");
+
+    int counter_lowongan = 107; // Start after hardcoded ones
+    int counter_lamaran = 1;
+
     while (true) { // Outer loop for Login/Logout
         string activeUser, activeRole;
         if (!Login(activeUser, activeRole)) {
@@ -51,8 +57,6 @@ int main() {
         }
         // --------------------------------
 
-        int counter_lowongan = 107; // Start after hardcoded ones
-        int counter_lamaran = 1;
         int pilihan_menu_utama;
 
         cout << "========================================" << endl;
@@ -72,6 +76,24 @@ int main() {
         }
         
         do {
+            // --- PRE-CALCULATE NOTIFICATIONS FOR MENU ---
+            int notifCount = 0;
+            if (activeRole == "mahasiswa") {
+                string currentNIM = "";
+                address_child C = L_Child.first;
+                while (C != nullptr) {
+                    if (C->info.nama == activeUser) { 
+                        currentNIM = C->info.nim;
+                        break;
+                    }
+                    C = C->next;
+                }
+                if (!currentNIM.empty()) {
+                    notifCount = countNotifikasi(L_Parent, currentNIM);
+                }
+            }
+            // -------------------------------------------
+
             cout << "\n\n--- MENU UTAMA (" << activeRole << ") ---" << endl;
             
             if (activeRole == "mahasiswa") {
@@ -79,10 +101,12 @@ int main() {
                 cout << "2. Lihat Daftar Lowongan" << endl; 
                 cout << "3. Ajukan Lamaran (Upload CV)" << endl;
                 cout << "4. Cek Status Lamaran" << endl;
+                cout << "5. Pesan (" << notifCount << ")" << endl;
                 cout << "0. Keluar (Logout)" << endl;
             } else if (activeRole == "dosen") {
                 cout << "1. Verifikasi Lamaran" << endl;
                 cout << "2. Lihat Daftar Lowongan" << endl;
+                cout << "3. Rekap Lamaran Mahasiswa" << endl;
                 cout << "0. Keluar (Logout)" << endl;
             } else if (activeRole == "perusahaan") {
                 cout << "1. Input Lowongan Baru" << endl;
@@ -114,6 +138,24 @@ int main() {
             // --- LOGIKA MENU BERDASARKAN ROLE ---
             
             if (activeRole == "mahasiswa") {
+                // Try to find NIM based on activeUser (assuming Name == Username)
+                string currentNIM = "";
+                address_child C = L_Child.first;
+                while (C != nullptr) {
+                    if (C->info.nama == activeUser) { // Simple matching
+                        currentNIM = C->info.nim;
+                        break;
+                    }
+                    C = C->next;
+                }
+                
+                int notifCount = 0;
+                if (!currentNIM.empty()) {
+                    notifCount = countNotifikasi(L_Parent, currentNIM);
+                }
+
+                // Redundant menu display removed. Using main loop menu.
+
                 switch (pilihan_menu_utama) {
                     case 1: { // Input Data Diri
                         int pilihan_sub;
@@ -124,7 +166,10 @@ int main() {
                             cout << "\n--- INPUT DATA DIRI ---" << endl;
                             cin.ignore(numeric_limits<streamsize>::max(), '\n');
                             cout << "Masukkan NIM: "; getline(cin, nim_input);
-                            cout << "Masukkan Nama Lengkap: "; cin.getline(nama_input, 100);
+                            // Auto-fill name with activeUser to ensure matching
+                            cout << "Nama Lengkap (Otomatis): " << activeUser << endl;
+                            strcpy(nama_input, activeUser.c_str()); 
+                            
                             cout << "Masukkan Angkatan (Tahun): ";
                             if (!(cin >> angkatan_input)) {
                                 cout << "Input Angkatan tidak valid." << endl;
@@ -151,8 +196,8 @@ int main() {
                         char nama_input[100];
                         
                         cout << "--- AJUKAN LAMARAN ---" << endl;
-                        cout << "1. Pilih File CV (PDF/Lainnya) akan terbuka otomatis..." << endl;
-                        system("pause"); // Give user a moment to read before dialog opens
+                        cout << "1. Pilih File CV (PDF/TXT) akan terbuka otomatis..." << endl;
+                        system("pause"); 
                         
                         cv_path = OpenFileDialog();
                         if (cv_path.empty()) {
@@ -165,9 +210,10 @@ int main() {
                         cin.ignore(numeric_limits<streamsize>::max(), '\n');
                         
                         cout << "Masukkan NIM Anda: "; getline(cin, nim_input);
-                        cout << "Masukkan Nama Lengkap: "; cin.getline(nama_input, 100);
+                        // Auto-fill name
+                        cout << "Nama Lengkap: " << activeUser << endl;
                         
-                        insertRelasi(L_Parent, L_Child, id_lowongan_input, nim_input, nama_input, counter_lamaran++, cv_path);
+                        insertRelasi(L_Parent, L_Child, id_lowongan_input, nim_input, activeUser, counter_lamaran++, cv_path);
                         break;
                     }
                     case 4: { // Status Lamaran
@@ -178,10 +224,21 @@ int main() {
                         showStatusLamaranMahasiswa(L_Parent, nim_input);
                         break;
                     }
+                    case 5: { // Pesan / Notifikasi
+                        if (currentNIM.empty()) {
+                            cout << "Silakan 'Input Data Diri' terlebih dahulu agar sistem mengenali NIM Anda." << endl;
+                        } else {
+                            showNotifikasi(L_Parent, currentNIM);
+                        }
+                        system("pause");
+                        break;
+                    }
                     default: cout << "Pilihan tidak valid." << endl;
                 }
             } 
             else if (activeRole == "dosen") {
+                // Redundant menu display removed. Using main loop menu.
+
                 switch (pilihan_menu_utama) {
                     case 1: { // Verifikasi
                         int id_lamaran_target, status_baru;
@@ -192,6 +249,11 @@ int main() {
                     }
                     case 2: { // Lihat Lowongan
                         showLowongan(L_Parent);
+                        break;
+                    }
+                    case 3: { // Rekap Lamaran
+                        showRekapLamaranDosen(L_Parent);
+                        system("pause");
                         break;
                     }
                     default: cout << "Pilihan tidak valid." << endl;
@@ -208,10 +270,10 @@ int main() {
                         break;
                     }
                     case 2: { // Keputusan
-                        int id_lamaran_target, status_baru;
+                        int id_lamaran_target;
                         cout << "Masukkan ID Lamaran (BUKAN ID Lowongan): "; cin >> id_lamaran_target;
-                        cout << "Status Keputusan (1=DITERIMA, 2=DITOLAK): "; cin >> status_baru;
-                        editStatusPerusahaan(L_Parent, id_lamaran_target, status_baru);
+                        // Status input moved inside the function for better UX (CV Review)
+                        editStatusPerusahaan(L_Parent, id_lamaran_target);
                         break;
                     }
                     case 3: { // Rekap
@@ -242,6 +304,10 @@ int main() {
 
         } while (true);
     }
+    
+    // Cleanup: Delete all uploaded files
+    cout << "Cleaning up temporary files..." << endl;
+    system("del /Q uploads\\* 2> NUL");
 
     return 0;
 }
