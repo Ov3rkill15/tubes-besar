@@ -11,7 +11,6 @@ using namespace std;
 // Deklarasi fungsi Show (yang implementasinya ada di lowongan.cpp dan mahasiswa.cpp)
 // --- FUNGSI UTAMA ---
 int main() {
-    cout << "kontol" << endl;
     ListParent L_Parent;
     ListChild L_Child;
     createListParent(L_Parent);
@@ -76,7 +75,7 @@ int main() {
             case 2: { // Input Data Mahasiswa Baru (Child)
                 int pilihan_sub;
                 do {
-                    char nim_input[10];
+                    string nim_input;
                     char nama_input[100];
                     int angkatan_input;
 
@@ -84,7 +83,7 @@ int main() {
 
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    cout << "Masukkan NIM: "; cin.getline(nim_input, 10);
+                    cout << "Masukkan NIM: "; getline(cin, nim_input);
                     cout << "Masukkan Nama Lengkap: "; cin.getline(nama_input, 100);
 
                     cout << "Masukkan Angkatan (Tahun): ";
@@ -122,7 +121,7 @@ int main() {
             }
             case 3: { // Ajukan Lamaran (INSERT ELEMENT RELATION)
                 int id_lowongan_input;
-                char nim_input[10];
+                string nim_input;
                 char nama_input[100];
 
                 cout << "--- PENGINPUTAN DATA PELAMAR ---" << endl;
@@ -134,7 +133,7 @@ int main() {
 
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                cout << "Masukkan NIM Anda: "; cin.getline(nim_input, 10);
+                cout << "Masukkan NIM Anda: "; getline(cin, nim_input);
                 cout << "Masukkan Nama Lengkap Anda: "; cin.getline(nama_input, 100);
 
                 insertRelasi(L_Parent, L_Child, id_lowongan_input, nim_input, nama_input, counter_lamaran++);
@@ -142,14 +141,14 @@ int main() {
             }
             case 4: { // Verifikasi Dosen (EDIT RELASI)
                 int id_lamaran_target, status_baru;
-                cout << "Masukkan ID Lamaran untuk diverifikasi: "; cin >> id_lamaran_target;
+                cout << "Masukkan ID Lamaran (BUKAN ID Lowongan): "; cin >> id_lamaran_target;
                 cout << "Status Verifikasi (1=DISETUJUI, 2=DITOLAK): "; cin >> status_baru;
                 editStatusDosen(L_Parent, id_lamaran_target, status_baru);
                 break;
             }
             case 5: { // Keputusan Perusahaan (EDIT RELASI)
                 int id_lamaran_target, status_baru;
-                cout << "Masukkan ID Lamaran untuk keputusan Perusahaan: "; cin >> id_lamaran_target;
+                cout << "Masukkan ID Lamaran (BUKAN ID Lowongan): "; cin >> id_lamaran_target;
                 cout << "Status Keputusan (1=DITERIMA, 2=DITOLAK): "; cin >> status_baru;
                 editStatusPerusahaan(L_Parent, id_lamaran_target, status_baru);
                 break;
@@ -167,11 +166,11 @@ int main() {
                 break;
             }
            case 9: { // STATUS LAMARAN (MAHASISWA)
-                char nim_input[10];
+                string nim_input;
                 cout << "\n--- STATUS LAMARAN ---" << endl;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Masukkan NIM Anda: ";
-                cin.getline(nim_input, 10);
+                getline(cin, nim_input);
                 showStatusLamaranMahasiswa(L_Parent, nim_input);
                 break;
             }
@@ -186,7 +185,7 @@ int main() {
                 cout << "Pilihan tidak ditemukan." << endl;
         }
 
-    } while (pilihan_menu_utama != 10); // Kondisi keluar disesuaikan
+    } while (pilihan_menu_utama != 11); // Kondisi keluar disesuaikan
 
     return 0;
 }

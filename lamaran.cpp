@@ -37,7 +37,7 @@ void insertRelasi(ListParent &L_Parent, ListChild &L_Child, int ID_Lowongan, str
             while (R_Last->next != nullptr) R_Last = R_Last->next;
             R_Last->next = R_Baru;
         }
-        cout << " Lamaran ID " << ID_Lamaran_Baru << " diajukan ke Lowongan " << ID_Lowongan << "." << endl;
+        cout << " [BERHASIL] Lamaran ID: " << ID_Lamaran_Baru << " (Simpan ID ini untuk verifikasi!) diajukan ke Lowongan ID: " << ID_Lowongan << "." << endl;
     } else {
         cout << " Error: Lowongan ID " << ID_Lowongan << " tidak ditemukan. Lamaran dibatalkan." << endl;
     }

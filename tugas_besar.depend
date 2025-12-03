@@ -103,3 +103,40 @@
 	"MLL_STRUCTS.h"
 	<string>
 
+1764668360 source:d:\matkul smester 3\struktur data\tubes-besar\lamaran.cpp
+	"lamaran.h"
+	"lowongan.h"
+	"mahasiswa.h"
+	<iomanip>
+	<cstring>
+
+1764668360 d:\matkul smester 3\struktur data\tubes-besar\lamaran.h
+	"MLL_STRUCTS.h"
+
+1764668360 d:\matkul smester 3\struktur data\tubes-besar\mll_structs.h
+	<iostream>
+	<string>
+
+1764668360 d:\matkul smester 3\struktur data\tubes-besar\lowongan.h
+	"mll_structs.h"
+
+1764668360 d:\matkul smester 3\struktur data\tubes-besar\mahasiswa.h
+	"mll_structs.h"
+
+1764668360 source:d:\matkul smester 3\struktur data\tubes-besar\lowongan.cpp
+	"lowongan.h"
+	<cstring>
+	<limits>
+	<iomanip>
+
+1764668360 source:d:\matkul smester 3\struktur data\tubes-besar\mahasiswa.cpp
+	"mahasiswa.h"
+	<cstring>
+
+1764755424 source:d:\matkul smester 3\struktur data\tubes-besar\main.cpp
+	"lowongan.h"
+	"mahasiswa.h"
+	"lamaran.h"
+	<limits>
+	<iomanip>
+
