@@ -71,69 +71,66 @@ Sistem Layanan Magang adalah aplikasi berbasis konsol (CLI) yang dibangun menggu
 ## 📊 Alur Program
 
 ```mermaid
-graph TD
-    %% Nodes
+graph LR
+    %% Setup Styling
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    classDef menu fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef term fill:#f9c2ff,stroke:#4a148c,stroke-width:2px;
+
+    %% Main Flow
     Start([Start]) --> Init[Init Data] --> LoginStart{Login Menu}
-    
-    %% Login System
-    subgraph Login_System [Authentication]
+
+    subgraph Auth_System [Authentication]
         LoginStart -- "1. Masuk" --> Auth{Cek User}
-        LoginStart -- "2. Daftar" --> Register[Register User] --> LoginStart
+        LoginStart -- "2. Daftar" --> Register[Register] --> LoginStart
         Auth -- "Gagal" --> LoginStart
     end
 
-    %% Main Dashboard
     Auth -- "Sukses" --> RoleCheck{Cek Role}
 
-    %% Role: Mahasiswa
-    subgraph Mahasiswa [Role: Mahasiswa]
-        RoleCheck --> M_Menu[Menu Mahasiswa]
-        M_Menu --- M1[1. Input Data Diri]
-        M_Menu --- M2[2. Lihat Lowongan]
-        M_Menu --- M3[3. Ajukan Lamaran]
-        M_Menu --- M4[4. Cek Status]
-        M_Menu --- M5[5. Notifikasi]
+    %% Role Branches (Stacked Vertically in LR mode)
+    RoleCheck --> M_Menu
+    RoleCheck --> D_Menu
+    RoleCheck --> P_Menu
+    RoleCheck --> A_Menu
+
+    subgraph R_M [Mahasiswa]
+        M_Menu[Menu Mahasiswa] --> M1[1. Input Data]
+        M_Menu --> M2[2. Lihat Lowongan]
+        M_Menu --> M3[3. Ajukan Lamaran]
+        M_Menu --> M4[4. Cek Status]
+        M_Menu --> M5[5. Notifikasi]
     end
 
-    %% Role: Dosen
-    subgraph Dosen [Role: Dosen]
-        RoleCheck --> D_Menu[Menu Dosen]
-        D_Menu --- D1[1. Verifikasi Lamaran]
-        D_Menu --- D2[2. Lihat Lowongan]
-        D_Menu --- D3[3. Rekap Mahasiswa]
+    subgraph R_D [Dosen]
+        D_Menu[Menu Dosen] --> D1[1. Verifikasi]
+        D_Menu --> D2[2. Lihat Lowongan]
+        D_Menu --> D3[3. Rekap Mhs]
     end
 
-    %% Role: Perusahaan
-    subgraph Perusahaan [Role: Perusahaan]
-        RoleCheck --> P_Menu[Menu Perusahaan]
-        P_Menu --- P1[1. Input Lowongan]
-        P_Menu --- P2[2. Keputusan Lamaran]
-        P_Menu --- P3[3. Rekap Masuk]
-        P_Menu --- P4[4. Cari API]
+    subgraph R_P [Perusahaan]
+        P_Menu[Menu Perusahaan] --> P1[1. Input Lowongan]
+        P_Menu --> P2[2. Keputusan]
+        P_Menu --> P3[3. Rekap Masuk]
+        P_Menu --> P4[4. Cari API]
     end
 
-    %% Role: Admin
-    subgraph Admin [Role: Admin]
-        RoleCheck --> A_Menu[Menu Admin]
-        A_Menu --- A1[1. Kelola User]
-        A_Menu --- A2[2. Lihat Semua Data]
-        A_Menu --- A3[3. Rekap Total]
+    subgraph R_A [Admin]
+        A_Menu[Menu Admin] --> A1[1. Kelola User]
+        A_Menu --> A2[2. Lihat Data]
+        A_Menu --> A3[3. Rekap Total]
     end
 
-    %% Logout Flow
-    M_Menu -.-> Logout
+    %% Logout Routing
+    M_Menu -.-> Logout(Logout)
     D_Menu -.-> Logout
     P_Menu -.-> Logout
     A_Menu -.-> Logout
     
-    Logout(Logout) --> LoginStart
-    LoginStart -- "0. Keluar App" --> End([End])
+    Logout --> LoginStart
+    LoginStart -- "0. Keluar" --> End([End])
 
-    %% Styling
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    classDef menu fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef term fill:#f9c2ff,stroke:#4a148c,stroke-width:2px;
-    
+    %% Apply Styles
     class M_Menu,D_Menu,P_Menu,A_Menu menu;
     class Start,End,Logout term;
 ```
