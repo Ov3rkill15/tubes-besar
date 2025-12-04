@@ -72,10 +72,15 @@ Sistem Layanan Magang adalah aplikasi berbasis konsol (CLI) yang dibangun menggu
 
 ```mermaid
 graph LR
-    %% Setup Styling
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    classDef menu fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef term fill:#f9c2ff,stroke:#4a148c,stroke-width:2px;
+    %% Setup Styling High Contrast
+    %% Fill: Background warna kotak
+    %% Stroke: Garis pinggir
+    %% Color: Warna Teks (PENTING: Hitam #000 biar terbaca di kotak terang)
+    
+    classDef default fill:#ffffff,stroke:#333333,stroke-width:1px,color:#000000;
+    classDef menu fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000000;
+    classDef term fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000;
+    classDef auth fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000;
 
     %% Main Flow
     Start([Start]) --> Init[Init Data] --> LoginStart{Login Menu}
@@ -133,6 +138,7 @@ graph LR
     %% Apply Styles
     class M_Menu,D_Menu,P_Menu,A_Menu menu;
     class Start,End,Logout term;
+    class LoginStart,Auth,Register,RoleCheck auth;
 ```
 
 ---
