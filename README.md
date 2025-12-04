@@ -73,136 +73,69 @@ Sistem Layanan Magang adalah aplikasi berbasis konsol (CLI) yang dibangun menggu
 ```mermaid
 graph TD
     %% Nodes
-    Start([Start Application])
-    Init["Initialize Data Structures\n(ListParent, ListChild, Users)"]
-    MkDir[Create 'uploads' Directory]
+    Start([Start]) --> Init[Init Data] --> LoginStart{Login Menu}
     
     %% Login System
-    subgraph Login_System [Login System]
-        LoginStart{Login Menu}
-        InputLogin[/"Input Username & Password"/]
-        InputRegister[/"Input New User Data"/]
-        Auth{Authenticate?}
-        RegisterAction["Add to Users Array\n(Default: Mahasiswa)"]
-        CheckExit{Exit?}
+    subgraph Login_System [Authentication]
+        LoginStart -- "1. Masuk" --> Auth{Cek User}
+        LoginStart -- "2. Daftar" --> Register[Register User] --> LoginStart
+        Auth -- "Gagal" --> LoginStart
     end
 
-    %% Main Logic
-    Cleanup[Cleanup Temporary Files]
-    End([End Application])
+    %% Main Dashboard
+    Auth -- "Sukses" --> RoleCheck{Cek Role}
 
-    %% Role Branching
-    subgraph Dashboard [Main Dashboard]
-        RoleCheck{Check User Role}
-        
-        %% Mahasiswa Flow
-        subgraph Role_Mahasiswa [Role: Mahasiswa]
-            M_Menu[Mahasiswa Menu]
-            M_Input[1. Input Data Diri]
-            M_View[2. Lihat Lowongan]
-            M_Apply[3. Ajukan Lamaran + Upload CV]
-            M_Status[4. Cek Status Lamaran]
-            M_Msg[5. Pesan / Notifikasi]
-        end
-
-        %% Dosen Flow
-        subgraph Role_Dosen [Role: Dosen]
-            D_Menu[Dosen Menu]
-            D_Verify[1. Verifikasi Lamaran]
-            D_View[2. Lihat Lowongan]
-            D_Recap[3. Rekap Lamaran Mahasiswa]
-        end
-
-        %% Perusahaan Flow
-        subgraph Role_Perusahaan [Role: Perusahaan]
-            P_Menu[Perusahaan Menu]
-            P_Input[1. Input Lowongan Baru]
-            P_Decide[2. Keputusan Lamaran]
-            P_Recap[3. Rekap Lamaran Masuk]
-            P_API["4. Cari Lowongan Online (API)"]
-        end
-
-        %% Admin Flow
-        subgraph Role_Admin [Role: Admin]
-            A_Menu[Admin Menu]
-            A_Manage["1. Kelola User (Admin Panel)"]
-            A_ViewAll["2. Lihat Semua Data (M:N)"]
-            A_Recap[3. Rekap Semua Lamaran]
-            
-            subgraph Admin_Panel [Admin Panel]
-                AP_Add[Tambah User]
-                AP_Edit[Ubah User]
-                AP_Del[Hapus User]
-                AP_Log[Lihat Riwayat]
-            end
-        end
+    %% Role: Mahasiswa
+    subgraph Mahasiswa [Role: Mahasiswa]
+        RoleCheck --> M_Menu[Menu Mahasiswa]
+        M_Menu --- M1[1. Input Data Diri]
+        M_Menu --- M2[2. Lihat Lowongan]
+        M_Menu --- M3[3. Ajukan Lamaran]
+        M_Menu --- M4[4. Cek Status]
+        M_Menu --- M5[5. Notifikasi]
     end
 
-    Logout{Logout?}
+    %% Role: Dosen
+    subgraph Dosen [Role: Dosen]
+        RoleCheck --> D_Menu[Menu Dosen]
+        D_Menu --- D1[1. Verifikasi Lamaran]
+        D_Menu --- D2[2. Lihat Lowongan]
+        D_Menu --- D3[3. Rekap Mahasiswa]
+    end
 
-    %% Connections
-    Start --> Init --> MkDir --> LoginStart
+    %% Role: Perusahaan
+    subgraph Perusahaan [Role: Perusahaan]
+        RoleCheck --> P_Menu[Menu Perusahaan]
+        P_Menu --- P1[1. Input Lowongan]
+        P_Menu --- P2[2. Keputusan Lamaran]
+        P_Menu --- P3[3. Rekap Masuk]
+        P_Menu --- P4[4. Cari API]
+    end
+
+    %% Role: Admin
+    subgraph Admin [Role: Admin]
+        RoleCheck --> A_Menu[Menu Admin]
+        A_Menu --- A1[1. Kelola User]
+        A_Menu --- A2[2. Lihat Semua Data]
+        A_Menu --- A3[3. Rekap Total]
+    end
+
+    %% Logout Flow
+    M_Menu -.-> Logout
+    D_Menu -.-> Logout
+    P_Menu -.-> Logout
+    A_Menu -.-> Logout
     
-    %% Login Logic
-    LoginStart -- "1. Masuk" --> InputLogin
-    LoginStart -- "2. Daftar" --> InputRegister
-    LoginStart -- "0. Keluar" --> CheckExit
-    
-    InputRegister --> RegisterAction --> LoginStart
-    InputLogin --> Auth
-    Auth -- "Success" --> RoleCheck
-    Auth -- "Fail" --> LoginStart
-    CheckExit -- "Yes" --> Cleanup --> End
-
-    %% Role Routing
-    RoleCheck -- "MAHASISWA" --> M_Menu
-    RoleCheck -- "DOSEN" --> D_Menu
-    RoleCheck -- "PERUSAHAAN" --> P_Menu
-    RoleCheck -- "ADMIN" --> A_Menu
-
-    %% Mahasiswa Actions
-    M_Menu --> M_Input
-    M_Menu --> M_View
-    M_Menu --> M_Apply
-    M_Menu --> M_Status
-    M_Menu --> M_Msg
-
-    %% Dosen Actions
-    D_Menu --> D_Verify
-    D_Menu --> D_View
-    D_Menu --> D_Recap
-
-    %% Perusahaan Actions
-    P_Menu --> P_Input
-    P_Menu --> P_Decide
-    P_Menu --> P_Recap
-    P_Menu --> P_API
-
-    %% Admin Actions
-    A_Menu --> A_Manage
-    A_Menu --> A_ViewAll
-    A_Menu --> A_Recap
-    A_Manage --> Admin_Panel
-
-    %% Loop Back / Logout
-    M_Input & M_View & M_Apply & M_Status & M_Msg --> Logout
-    D_Verify & D_View & D_Recap --> Logout
-    P_Input & P_Decide & P_Recap & P_API --> Logout
-    A_Manage & A_ViewAll & A_Recap --> Logout
-
-    Logout -- "No (Continue)" --> RoleCheck
-    Logout -- "Yes (Logout)" --> LoginStart
+    Logout(Logout) --> LoginStart
+    LoginStart -- "0. Keluar App" --> End([End])
 
     %% Styling
-    classDef startend fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef process fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef role fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-
-    class Start,End,Cleanup startend;
-    class Init,MkDir,RegisterAction,M_Input,M_View,M_Apply,M_Status,M_Msg,D_Verify,D_View,D_Recap,P_Input,P_Decide,P_Recap,P_API,A_Manage,A_ViewAll,A_Recap process;
-    class LoginStart,Auth,CheckExit,RoleCheck,Logout decision;
-    class M_Menu,D_Menu,P_Menu,A_Menu role;
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    classDef menu fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef term fill:#f9c2ff,stroke:#4a148c,stroke-width:2px;
+    
+    class M_Menu,D_Menu,P_Menu,A_Menu menu;
+    class Start,End,Logout term;
 ```
 
 ---
